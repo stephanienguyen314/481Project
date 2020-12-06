@@ -1,4 +1,5 @@
 import sqlite3
+import random
 from flask import Flask, render_template, request, url_for, flash, redirect, session
 from werkzeug.exceptions import abort
 
@@ -97,6 +98,33 @@ def getClasses():
     print(str(allClasses['className']))
     return allClasses['className']
 
+def randomSectionSelection(desiredCourseTitle):
+    conn = get_database_connection()
+    section = conn.execute('SELECT sectionID from courses WHERE courseTitle = ?', [desiredCourseTitle]).fetchall()
+    conn.close()
+
+    # randomly select an element from section
+    random_section = random.choice(section)
+
+    return random_section['sectionID']
+
+def fitness(candidates):
+    conn = get_database_connection()
+    number_desired_courses = len(desired_courses)
+    for j in range(0, len)
+    # get the lectureStart and lectureEnd times
+    #for j in range(0, len(candidates)):
+    #    for i in candidates[j]:
+    #        print(i, candidates[j][i]) 
+        
+        #lectureStart = conn.execute('SELECT lectureStartTime from courses WHERE courseTitle, courseID = (?,?)', 
+        #[ candidates_list.get(candidates_list[i]), candidates_list.get])
+    # get the labStart and labEnd times if applicable
+    # get the desired arrival and dismissal times
+    # get the desired break times
+    # look for collisions, and then return the number of collisions
+    pass
+
 @app.route('/')
 @app.route('/index', methods=["GET"])
 def index():
@@ -111,8 +139,23 @@ def generate():
     # genetic algorithm likely to work best
     # generate all possible candidates, and then perform evolution on them and evaluate them against a fitness function to make sure that all constraints are met
 
-    # first, gather only courses for which the arrival and dismissal times are respected
-    pass
+    # generate all possible candidates
+    # get list of all desired courses and for each element in this list, randomly select a section and push it to the candidates dictionary
+    # randomly generate 50 candidate solutions; this number can be increased
+    candidates = []
+    for j in range(0, 50):
+        for i in range(0, len(desired_courses)):
+            # get random section selection
+            # add courseTitle, sectionID as a list to candidates
+            section = randomSectionSelection(desired_courses[i])
+            candidates.append([desired_courses[i], section])
+    print(str(candidates))
+    fitness(candidates)
+
+    # fitness function: for this problem, means reducing the number of clashes in the schedule
+
+
+    return render_template('generated.html')
 
 
 # display individual course information
