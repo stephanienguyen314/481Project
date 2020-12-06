@@ -1,8 +1,6 @@
 import sqlite3
-import os
 from flask import Flask, render_template, request, url_for, flash, redirect, session
 from werkzeug.exceptions import abort
-from werkzeug.utils import secure_filename
 
 # initialize the Flask app
 app = Flask(__name__)
@@ -111,7 +109,11 @@ def index():
 def generate():
     # this is where we execute the local search algorithm
     # genetic algorithm likely to work best
-    print('function cannot be empty so here is some text')
+    # generate all possible candidates, and then perform evolution on them and evaluate them against a fitness function to make sure that all constraints are met
+
+    # first, gather only courses for which the arrival and dismissal times are respected
+    pass
+
 
 # display individual course information
 # course.html will render course title, and all lecture/lab times and give option for student to select that specific course to enroll in
@@ -132,31 +134,26 @@ def display_course(id):
     return redirect(url_for('index'))
 
 # endpoint for setting arrival time
-@app.route('/<int:time>/set_early', methods=['GET', 'POST'])
-def set_early(time):
-    setEarly(time)
-    return redirect(url_for('index'))
+@app.route('/set_early', methods=['GET', 'POST'])
+def set_early():
+
+    if request.method == 'POST':
+        desiredArrival = request.form.get('desiredArrival')
+        setEarly(desiredArrival)
+        return redirect(url_for('index'))
+
+    return render_template('set_early.html', times=times)
 
 # endpoint for setting dismissal time
-@app.route('/<int:time>/set_dismissal', methods=['GET', 'POST'])
-def set_dismissal(time):
-    setDismissal(time)
-    return redirect(url_for('index'))
+@app.route('/set_dismissal', methods=['GET', 'POST'])
+def set_dismissal():
 
-# functions to show html; will be combined with ^ endpoints
-@app.route('/course')
-def render_course():
-    courses = getCourseTitles()
-    return render_template('course.html', courses=courses)
+    if request.method == 'POST':
+        desiredDismissal = request.form.get('desiredDismissal')
+        setDismissal(desiredDismissal)
+        return redirect(url_for('index'))
 
-@app.route('/set_early')
-def render_setearly():
-    return render_template('set_early.html', times=times, earliest_start=earliest_start)
-
-@app.route('/set_dismissal')
-def render_setdismissal():
-    courses = getCourseTitles()
-    return render_template('set_dismissal.html', times=times, earliest_start=earliest_start, latest_end=latest_end)
+    return render_template('set_dismissal.html', times=times)
 
 # endpoint to set breaks
 @app.route('/set_breaks', methods=['GET', 'POST'])
@@ -173,6 +170,13 @@ def set_breaks():
         return redirect(url_for('index'))
 
     return render_template('set_breaks.html', times=times)
+
+# functions to show html; will be combined with ^ endpoints
+@app.route('/course')
+def render_course():
+    courses = getCourseTitles()
+    return render_template('course.html', courses=courses)
+
 
 if __name__ == "__main__":
  app.run(debug = True)
