@@ -13,19 +13,47 @@
   <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
 </head>
 
-<body>
+<body style="background-color: rgb(252, 252, 252);">
 
-  <p>Welcome to our Course Scheduler Application. To get started, click the "Select Courses" button below, to specify which courses you would like to take.</p>
-  <p>Then, select the earliest time that you want to start your classes. The default start time is 8am.</p>
-  <p>Then, select the latest dismissal time for your classes. The default dismissal time is 5pm.</p>
-  <p>And finally, select any additional breaks that you would like throughout your day, such as lunch times and break periods.</p>
-  <p>All your current selections are displayed below.</p>
-  <p>Once you are ready, hit "Generate schedule!" and you will be given a list of possible class schedules to fit your needs.</p>
+  <h1 style="text-align: center;">Welcome to our Course Scheduler Application! </h1>
 
-  <a class="btn btn-dark" href="/display_course" role="button">Select Courses</a>
-  <a class="btn btn-dark" href="/set_early" role="button">Select Earliest Start Time</a>
-  <a class="btn btn-dark" href="/set_dismissal" role="button">Select Dismissal Time</a>
-  <a class="btn btn-dark" href="/set_breaks" role="button">Select Break Periods</a>
+  <div style="text-align: center;">
+  <p>
+    <a class= "btn btn-primary" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
+      Click here for more info.
+      </a>
+    </p>
+    <div class="collapse" id="collapseExample">
+      <div class="card card-body text-white bg-primary mb-3">
+        <h3 style="text-align: center;">Step 1</h3>
+          <p style="text-align: center;"> Click the "Select Courses" button below, to specify which courses you would like to take.</p>
+        <h3 style="text-align: center;">Step 2</h3>
+          <p style="text-align: center;"> Select the earliest time that you want to start your classes. The default start time is 8am.</p>
+        <h3 style="text-align: center;">Step 3</h3>
+          <p style="text-align: center;">Select the latest dismissal time for your classes. The default dismissal time is 5pm.</p>
+        <h3 style="text-align: center;">Step 4 </h3>
+          <p style="text-align: center;">Select any additional breaks that you would like throughout your day, such as lunch times and break periods.</p>
+        <p style="text-align: center;">Once you are ready, hit "Generate schedule!" and you will be given a list of possible class schedules to fit your needs.</p>
+      </div>
+    </div>
+  </div>
+
+ 
+
+
+
+
+  <div class="text-center">
+    <div>
+      <div>
+       <a class="btn btn-primary" href="/display_course" role="button">Select Courses</a>
+       <a class="btn btn-primary" href="/set_early" role="button">Select Earliest Start Time</a>
+       <a class="btn btn-primary" href="/set_dismissal" role="button">Select Dismissal Time</a>
+       <a class="btn btn-primary" href="/set_breaks" role="button">Select Break Periods</a>    
+      </div>
+    </div>
+  </div>
+  
 
   <div class="container">
     {% for i in range(0, desiredlength) %}
@@ -43,8 +71,10 @@
     <p>Your desired dismissal time is: {{ latest_end }}</p>
   </div>
 
-  <a class="btn btn-dark" href="/generate" role="button">Generate Schedule!</a>
-
+  <div class="text-center">
+    <a class="btn btn-success" href="/generate" role="button">Generate Schedule!</a>
+  </div>
+  
 
 </body>
 
