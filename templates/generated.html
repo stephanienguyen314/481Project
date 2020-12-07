@@ -15,8 +15,8 @@
 
 <body>
 
-    <div class='container'>
-        <p>Here is a list of possible class schedules for you!</p>
+    <p style="font-size: 200%; text-align: center;">Here are all possible class schedules for you!</p>
+    <div class='container' style="text-align: center;">
 
         {% for finalAnswer in finalAnswers %}
         {% for elem in finalAnswer %}
@@ -24,7 +24,7 @@
         <td>Section ID: {{ elem[1] }}</td>
         <br>
         {% endfor %}
-        <hr>
+        <hr style="height: 3px;background-color:dodgerblue; margin-left: auto; width:25%; margin-right: auto;">
         {% endfor %}
     </div>
 

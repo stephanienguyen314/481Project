@@ -48,10 +48,10 @@
         <a class= "btn btn-primary" data-toggle="collapse" href="#collapseCourses" role="button" aria-expanded="false" aria-controls="collapseCourses">
           Select Courses
           </a>
-          <div class="card-body" id="collapseCourses" >
+          <div class="collapse" id="collapseCourses" >
             <div class="card card-body text-white bg-primary mb-3">
               <form method="POST" action="/display_course" enctype="multipart/form-data">
-                <p>pick a course</p>
+                <p>Choose a course</p>
                 <div class="form-group">
                   <label for="courses">
                     <select class="form-control" name="courses">
@@ -71,10 +71,10 @@
         <a class= "btn btn-primary" data-toggle="collapse" href="#collapseStartTime" role="button" aria-expanded="false" aria-controls="collapseStartTime">
             Select Earliest Start Time
             </a>
-            <div class="card-body" id="collapseStartTime" >
+            <div class="collapse" id="collapseStartTime" >
             <div class="card card-body text-white bg-primary mb-3">
               <form method="POST" action="/set_early" enctype="multipart/form-data">
-                <p>desired arrival</p>
+                <p>Earliest arrival</p>
                 <div class="form-group">
                     <label for="desiredArrival">
                         <select class="form-control" name="desiredArrival">
@@ -93,12 +93,12 @@
         </div>
         <div>
         <a class= "btn btn-primary" data-toggle="collapse" href="#collapseDismissalTime" role="button" aria-expanded="false" aria-controls="collapseDismissalTime">
-              Select Dismissal Time
+              Select Latest Dismissal Time
               </a>
-              <div class="card-body" id="collapseDismissalTime" >
+              <div class="collapse" id="collapseDismissalTime" >
               <div class="card card-body text-white bg-primary mb-3">
                 <form method="POST" action="/set_dismissal" enctype="multipart/form-data">
-                  <p>desired arrival</p>
+                  <p>Latest dismissal</p>
                   <div class="form-group">
                       <label for="desiredDismissal">
                           <select class="form-control" name="desiredDismissal">
@@ -118,10 +118,10 @@
         <a class= "btn btn-primary" data-toggle="collapse" href="#collapseBreakPeriods" role="button" aria-expanded="false" aria-controls="collapseBreakPeriods">
               Select Break Periods
               </a>
-              <div class="card-body" id="collapseBreakPeriods" >
+              <div class="collapse" id="collapseBreakPeriods" >
               <div class="card card-body text-white bg-primary mb-3">
                 <form method="POST" action="/set_breaks" enctype="multipart/form-data">
-                  <p>start break</p>
+                  <p>Start break</p>
                   <div class="form-group">
                       <label for="desiredStartBreak">
                           <select class="form-control" name="desiredStartBreak">
@@ -132,7 +132,7 @@
                           </select>
                       </label>
                   </div>
-                  <p>end break</p>
+                  <p>End break</p>
                   <div class="form-group">
                       <label for="desiredEndBreak">
                           <select class="form-control" name="desiredEndBreak">
