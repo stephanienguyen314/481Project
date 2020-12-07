@@ -149,6 +149,40 @@ def randomSectionSelection(desiredCourseTitle):
 
     return random_section['sectionID']
 
+# NOT IN USE
+def getFinalAnswerInfo(finalAnswerList):
+    finalAnswers = []
+    for j in range(0, len(finalAnswerList)):
+        times = []
+        for i in range(0, len(desired_courses)):
+            meetingInfo = []
+            courseTitle = finalAnswerList[j][i][0]
+            sectionID = finalAnswerList[j][i][1]
+            lectureDays = getLectureDays(courseTitle, sectionID)
+            meetingInfo.append(courseTitle)
+            meetingInfo.append(sectionID)
+            meetingInfo.append(lectureDays)
+
+            # returns an array with lectureStartTime and lectureEndTime
+            lectureTimes = getLectureTime(courseTitle, sectionID)
+            meetingInfo.append(range(lectureTimes[0], lectureTimes[1]))
+            
+            hasLab = courseHasLab(courseTitle, sectionID)
+
+            if (hasLab):
+                labDays = getLabDays(courseTitle, sectionID)
+                meetingInfo.append(labDays)
+
+                labTimes = getLabTime(courseTitle, sectionID)
+                meetingInfo.append(range(labTimes[0], labTimes[1]))
+
+            #times.append(courseTitle)
+            #times.append(sectionID)
+            times.append(meetingInfo)
+        finalAnswers.append(times)
+
+    return finalAnswers
+
 # END FUNCTIONS WITH DATABASE ACCESSES
 
 # using the times list, which contains meeting-day information for the classes in a candidate schedule
@@ -259,11 +293,11 @@ def fitness(candidates):
     # 3. do classes collide with breaks?
 
     # first, begin by obtaining all the meeting days/times for each class in each candidate schedule
+    
     for j in range(0, len(candidates)):
         # each time we encounter a collision, this number will go up
         collisions = int(0)
         times = []
-
         # examine 1 candidate solution at a time
         for i in range(0, len(desired_courses)):
             meetingInfo = []
@@ -442,7 +476,12 @@ def generate():
         finalAnswer.append(candidates[viableSolutions[a]])
 
     print('the final answer is ' + str(finalAnswer))
-    return render_template('generated.html')
+
+    # remove duplicates from finalAnswer
+    res = [] 
+    [res.append(x) for x in finalAnswer if x not in res] 
+
+    return render_template('generated.html', finalAnswers=res)
 
 # display individual course information
 # course.html will render course title, and all lecture/lab times and give option for student to select that specific course to enroll in
