@@ -81,7 +81,6 @@ def getBreaks():
     for i in range(0, len(getData)):
         temp_breaks = range(getData[i]['desiredStartBreak'], getData[i]['desiredEndBreak'])
         breaks.append(temp_breaks)
-    
     return breaks
 
 # using a selected courseTitle and sectionID, get the class's lecture times
@@ -191,9 +190,9 @@ def getClassTimes(times):
 
     examine_for_collisions = []
     for j in range(0, len(times)):
-
+        
         # for classes that have labs
-        if len(times[j])> 2:
+        if (len(times[j]) > 2):
             lectureDays = str(times[j][0])
             lectureTime = times[j][1]
 
@@ -228,6 +227,10 @@ def getClassTimes(times):
                 for q in range(0, len(splitLectureDays)):
                     examine_for_collisions.append([splitLectureDays[q], lectureTime])
 
+            else:
+                examine_for_collisions.append([lectureDays, lectureTime])
+
+
     return examine_for_collisions
 
 # BEGIN FUNCTIONS USED IN GENETIC ALGORITHM
@@ -244,7 +247,10 @@ def findInternalCollisions(examine_for_collisions):
             if examine_for_collisions[a][0] == examine_for_collisions[b][0]:
                 x = examine_for_collisions[a][1]
                 y = examine_for_collisions[b][1]
-                overlap = max(0, min(x[1], y[1]) - max(x[0], y[0]))
+                overlap = max(0, min(x[len(x)-1], y[len(y)-1]) - max(x[0], y[0]))
+                #print('x[0] is ' + str(x[0]) + ' and y[0] is ' + str(y[0]))
+                #print('x[1] is ' + str(x[1]) + ' and y[1] is ' + str(y[1]))
+                #print('overlap is ' + str(overlap))
 
                 if(overlap > 0):
                     temp_collisions = temp_collisions + 1
@@ -256,10 +262,10 @@ def findArrivalDismissalCollisions(examine_for_collisions, desiredArrival, desir
     temp_collisions = int(0)
 
     for a in range(0, len(examine_for_collisions)):
-        
-        if(min(examine_for_collisions[a][1]) < desiredArrival):
+        x = examine_for_collisions[a][1]
+        if(x[0] < desiredArrival):
             temp_collisions = temp_collisions + 1
-        if(max(examine_for_collisions[a][1]) + 1 > desiredDismissal):
+        if(x[len(x)-1] > desiredDismissal):
             temp_collisions = temp_collisions + 1
 
     return temp_collisions
@@ -272,7 +278,8 @@ def findBreaksCollisions(breaks, examine_for_collisions):
         for b in range(0, len(breaks)):
             x = examine_for_collisions[a][1]
             y = breaks[b]
-            overlap = max(0, min(x[1], y[1]) - max(x[0], y[0]))
+
+            overlap = max(0, min(x[len(x)-1], y[len(y)-1]) - max(x[0], y[0]))
 
             if(overlap > 0):
                 temp_collisions = temp_collisions + 1
@@ -329,11 +336,11 @@ def fitness(candidates):
         # then, this information is separated so that each meeting day/time is separated into its own list entry
         # for example, ['MO WE', range(1200, 1250)] will become ['MO', range(1200, 1250)], ['WE', range(1200, 1250)]
         examine_for_collisions = getClassTimes(times)
-
+        # print('1: examine_for_collisions is ' + str(examine_for_collisions))
         # 1. evaluate collisions with each other, meaning for example if the candidate solution is:
         # [[CPSC 120, Section 1], [CPSC 121, Section 1], and [CPSC 131, Section 1]], do these 3 collide with each other?
         internalCollisions = findInternalCollisions(examine_for_collisions)
-
+        # print('2: examine_for_collisions is ' + str(examine_for_collisions))
         # add the number of internal collisions to the total collisions count for this candidate solution
         collisions = collisions + int(internalCollisions)
 
@@ -342,6 +349,7 @@ def fitness(candidates):
         # the user inputted desired dismissal time
         desiredArrival = getEarly()
         desiredDismissal = getEnd()
+        # print('3: examine_for_collisions is ' + str(examine_for_collisions))
         arrivalDismissalCollisions = findArrivalDismissalCollisions(examine_for_collisions, desiredArrival, desiredDismissal)
         # add the number of collisions to the total collisions count for this candidate solution
         collisions = collisions + int(arrivalDismissalCollisions)
@@ -448,20 +456,20 @@ def generate():
             section = randomSectionSelection(desired_courses[i])
             temp.append([desired_courses[i], section])
         candidates.append(temp)
-    print('1 list of candidates is now: ' + str(candidates))
+    # print('1 list of candidates is now: ' + str(candidates))
 
     # take current candidates and perform crossover on them
     # then append these new crossed-over candidates to the candidates list
     for r in range(0, len(candidates), 2):
         candidates = crossover(candidates[r], candidates[r+1], candidates)
 
-    print('2 list of candidates is now: ' + str(candidates))
+    # print('2 list of candidates is now: ' + str(candidates))
     # take current candidates and perform mutation on them
     # then append these new mutated candidates to the candidates list
     for s in range(0, len(candidates)):
         candidates = mutation(candidates[s], candidates)
 
-    print('3 list of candidates is now: ' + str(candidates))
+    # print('3 list of candidates is now: ' + str(candidates))
 
     fitnessCandidates = fitness(candidates)
 
