@@ -38,7 +38,6 @@
     </div>
   </div>
 
- 
 
 
 
@@ -46,10 +45,112 @@
   <div class="text-center">
     <div>
       <div>
-       <a class="btn btn-primary" href="/display_course" role="button">Select Courses</a>
-       <a class="btn btn-primary" href="/set_early" role="button">Select Earliest Start Time</a>
-       <a class="btn btn-primary" href="/set_dismissal" role="button">Select Dismissal Time</a>
-       <a class="btn btn-primary" href="/set_breaks" role="button">Select Break Periods</a>    
+        <a class= "btn btn-primary" data-toggle="collapse" href="#collapseCourses" role="button" aria-expanded="false" aria-controls="collapseCourses">
+          Select Courses
+          </a>
+          <div class="card-body" id="collapseCourses" >
+            <div class="card card-body text-white bg-primary mb-3">
+              <form method="POST" action="/display_course" enctype="multipart/form-data">
+                <p>pick a course</p>
+                <div class="form-group">
+                  <label for="courses">
+                    <select class="form-control" name="courses">
+                      {% for course in courses %}
+                      <option value="{{ course['courseTitle'] }}">{{ course['courseTitle'] }}</option>
+                      <hr>
+                      {% endfor %}
+                    </select>
+                  </label>
+                </div>
+                <div class="form-group">
+                  <button type="submit" class="btn btn-primary">Submit</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        <a class= "btn btn-primary" data-toggle="collapse" href="#collapseStartTime" role="button" aria-expanded="false" aria-controls="collapseStartTime">
+            Select Earliest Start Time
+            </a>
+            <div class="card-body" id="collapseStartTime" >
+            <div class="card card-body text-white bg-primary mb-3">
+              <form method="POST" action="/set_early" enctype="multipart/form-data">
+                <p>desired arrival</p>
+                <div class="form-group">
+                    <label for="desiredArrival">
+                        <select class="form-control" name="desiredArrival">
+                            {% for display_time in times %}
+                            <option value="{{ display_time }}">{{ display_time }}</option>
+                            <hr>
+                            {% endfor %}
+                        </select>
+                    </label>
+                </div>
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </div>
+            </form>
+          </div>
+        </div>
+        <div>
+        <a class= "btn btn-primary" data-toggle="collapse" href="#collapseDismissalTime" role="button" aria-expanded="false" aria-controls="collapseDismissalTime">
+              Select Dismissal Time
+              </a>
+              <div class="card-body" id="collapseDismissalTime" >
+              <div class="card card-body text-white bg-primary mb-3">
+                <form method="POST" action="/set_dismissal" enctype="multipart/form-data">
+                  <p>desired arrival</p>
+                  <div class="form-group">
+                      <label for="desiredDismissal">
+                          <select class="form-control" name="desiredDismissal">
+                              {% for display_time in times %}
+                              <option value="{{ display_time }}">{{ display_time }}</option>
+                              <hr>
+                              {% endfor %}
+                          </select>
+                      </label>
+                  </div>
+                  <div class="form-group">
+                      <button type="submit" class="btn btn-primary">Submit</button>
+                  </div>
+              </form>
+            </div>
+            </div>
+        <a class= "btn btn-primary" data-toggle="collapse" href="#collapseBreakPeriods" role="button" aria-expanded="false" aria-controls="collapseBreakPeriods">
+              Select Break Periods
+              </a>
+              <div class="card-body" id="collapseBreakPeriods" >
+              <div class="card card-body text-white bg-primary mb-3">
+                <form method="POST" action="/set_breaks" enctype="multipart/form-data">
+                  <p>start break</p>
+                  <div class="form-group">
+                      <label for="desiredStartBreak">
+                          <select class="form-control" name="desiredStartBreak">
+                              {% for display_time in times %}
+                              <option value="{{ display_time }}">{{ display_time }}</option>
+                              <hr>
+                              {% endfor %}
+                          </select>
+                      </label>
+                  </div>
+                  <p>end break</p>
+                  <div class="form-group">
+                      <label for="desiredEndBreak">
+                          <select class="form-control" name="desiredEndBreak">
+                              {% for display_time in times %}
+                              <option value="{{ display_time }}">{{ display_time }}</option>
+                              <hr>
+                              {% endfor %}
+                          </select>
+                      </label>
+                  </div>
+          
+                  <div class="form-group">
+                      <button type="submit" class="btn btn-primary">Submit</button>
+                  </div>
+              </form>
+                </div>
+                </div>
+
       </div>
     </div>
   </div>
