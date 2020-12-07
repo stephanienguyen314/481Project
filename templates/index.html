@@ -15,7 +15,7 @@
 
 <body style="background-color: rgb(252, 252, 252);">
 
-  <h1 style="text-align: center;">Welcome to our Course Scheduler Application! </h1>
+  <h2>Welcome to our Course Scheduler Application! </h2>
 
   <div style="text-align: center;">
   <p>
@@ -157,19 +157,31 @@
   
 
   <div class="container">
+    <h1>Your desired courses are: </h1>
     {% for i in range(0, desiredlength) %}
 
     <p>{{desiredcourses[i]}}</p>
 
     {% endfor %}
   </div>
-
+  <hr>
   <div class="container">
-    <p>Your desired earliest start time is: {{ earliest_start }}</p>
+    <h1>Your desired earliest start time is:</h1> 
+    <p>{{ earliest_start }}</p>
   </div>
-
+  <hr>
   <div class="container">
-    <p>Your desired dismissal time is: {{ latest_end }}</p>
+    <h1>Your desired dismissal time is:</h1> 
+    <p>{{ latest_end }}</p>
+  </div>
+  <hr>
+  <div class="container">
+    <h1>Your desired break times are: </h1>
+    {% for i in range(0, desiredbreakslength) %}
+
+    <p>Break {{ i+1 }}: From {{ desiredbreaks[i]['desiredStartBreak'] }} - {{ desiredbreaks[i]['desiredEndBreak'] }}</p>
+
+    {% endfor %}
   </div>
 
   <div class="text-center">
