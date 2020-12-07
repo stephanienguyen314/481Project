@@ -15,9 +15,9 @@
 
 <body>
 
+    {% if collision_number == 'empty' %}
     <p style="font-size: 200%; text-align: center;">Here are all possible class schedules for you!</p>
     <div class='container' style="text-align: center;">
-
         {% for finalAnswer in finalAnswers %}
         {% for elem in finalAnswer %}
         <td>Course Title: {{ elem[0] }}</td>
@@ -27,7 +27,13 @@
         <hr style="height: 3px;background-color:dodgerblue; margin-left: auto; width:25%; margin-right: auto;">
         {% endfor %}
     </div>
-
+    {% else %}
+    <p style="font-size: 200%; text-align: center;">No working schedules found!</p>
+    <div class='container' style='text-align: center;'>
+        <p> Because of your specifications, we were not able to generate a possible class schedule for you that fits
+            all of your preferences. Please go back, and try again.</p>
+    </div>
+    {% endif %}
 </body>
 
 </html>
