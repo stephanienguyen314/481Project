@@ -3,6 +3,7 @@ DROP TABLE IF EXISTS display;
 DROP TABLE IF EXISTS desired;
 DROP TABLE IF EXISTS classes;
 DROP TABLE IF EXISTS breaks;
+DROP TABLE IF EXISTS candidates;
 
 CREATE TABLE courses (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -39,4 +40,10 @@ CREATE TABLE breaks (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     desiredStartBreak INT NOT NULL,
     desiredEndBreak INT NOT NULL
-)
+);
+
+CREATE TABLE candidates (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    courseTitle TEXT NOT NULL,
+    courseID TEXT NOT NULL
+);
