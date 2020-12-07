@@ -1,1 +1,33 @@
-This is the generated list of schedules.
+<!DOCTYPE html>
+<html lang="en">
+
+</html>
+<html>
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+
+<body>
+
+    <div class='container'>
+        <p>Here is a list of possible class schedules for you!</p>
+
+        {% for finalAnswer in finalAnswers %}
+        {% for elem in finalAnswer %}
+        <td>Course Title: {{ elem[0] }}</td>
+        <td>Section ID: {{ elem[1] }}</td>
+        <br>
+        {% endfor %}
+        <hr>
+        {% endfor %}
+    </div>
+
+</body>
+
+</html>
