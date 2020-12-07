@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 
-</html>
 <html>
 
 <head>
@@ -14,23 +13,22 @@
 </head>
 
 <body>
-
-  <div class="dropdown">
-    <h2>Course Scheduler</h2>
-    <p>Select the classes you want to take, and we'll generate some schedules for you that work with your constraints!
-    </p>
-    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown"
-      aria-haspopup="true" aria-expanded="false">
-      Select a course...
-    </button>
-    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-      {% for course in courses %}
-      <a class="dropdown-item"
-        href="{{ url_for('display_course', id=course['courseID']) }}">{{ course['courseTitle'] }}</a>
-      <hr>
-      {% endfor %}
+  <form method="POST" action="/display_course" enctype="multipart/form-data">
+    <p>pick a course</p>
+    <div class="form-group">
+      <label for="courses">
+        <select class="form-control" name="courses">
+          {% for course in courses %}
+          <option value="{{ course['courseTitle'] }}">{{ course['courseTitle'] }}</option>
+          <hr>
+          {% endfor %}
+        </select>
+      </label>
     </div>
-  </div>
+    <div class="form-group">
+      <button type="submit" class="btn btn-primary">Submit</button>
+    </div>
+  </form>
 
 </body>
 
