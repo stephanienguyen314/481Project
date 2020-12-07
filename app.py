@@ -8,7 +8,7 @@ app = Flask(__name__)
 app.secret_key = 'Stablecoffee123'
 
 # initialize empty, holds all desired courses; ignore the 'classes' table in schema.sql for now
-desired_courses = ['no courses selected yet']
+desired_courses = ['No courses have been selected yet.']
 # initialize earliest default start time as 8am - user will have chance to change this
 earliest_start = int(800)
 # initialize default dismissal time to be 5pm - user will have chance to change this
@@ -82,6 +82,13 @@ def getBreaks():
         temp_breaks = range(getData[i]['desiredStartBreak'], getData[i]['desiredEndBreak'])
         breaks.append(temp_breaks)
     return breaks
+
+# get desired breaks for display
+def getDisplayBreaks():
+    conn = get_database_connection()
+    getData = conn.execute('SELECT * FROM breaks').fetchall()
+    conn.close()
+    return getData
 
 # using a selected courseTitle and sectionID, get the class's lecture times
 def getLectureTime(courseTitle, sectionID):
@@ -432,7 +439,7 @@ def index():
     courses = getCourseTitles()
 
     return render_template('index.html', courses=courses, desiredcourses=desired_courses, desiredlength = len(desired_courses), 
-    times=times, earliest_start=getEarly(), latest_end=getEnd())
+    times=times, earliest_start=getEarly(), latest_end=getEnd(), desiredbreaks = getDisplayBreaks(), desiredbreakslength = len(getDisplayBreaks()))
 
 @app.route('/generate')
 def generate():
@@ -486,10 +493,15 @@ def generate():
     print('the final answer is ' + str(finalAnswer))
 
     # remove duplicates from finalAnswer
+    if not finalAnswer:
+        collision_number = 'found'
+    else:
+        collision_number = 'empty'
+
     res = [] 
     [res.append(x) for x in finalAnswer if x not in res] 
 
-    return render_template('generated.html', finalAnswers=res)
+    return render_template('generated.html', finalAnswers=res, collision_number = collision_number)
 
 # display individual course information
 # course.html will render course title, and all lecture/lab times and give option for student to select that specific course to enroll in
@@ -503,7 +515,7 @@ def display_course():
     if request.method == 'POST':
         course = request.form.get('courses')
     
-        if(desired_courses[0] == 'no courses selected yet'):
+        if(desired_courses[0] == 'No courses have been selected yet.'):
             desired_courses[0] = course
         else:
             desired_courses.append(course)
