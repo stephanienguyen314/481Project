@@ -1,7 +1,6 @@
 import sqlite3
 import random
 from flask import Flask, render_template, request, url_for, flash, redirect, session
-from werkzeug.exceptions import abort
 
 # initialize the Flask app
 app = Flask(__name__)
@@ -155,40 +154,6 @@ def randomSectionSelection(desiredCourseTitle):
 
     return random_section['sectionID']
 
-# NOT IN USE
-def getFinalAnswerInfo(finalAnswerList):
-    finalAnswers = []
-    for j in range(0, len(finalAnswerList)):
-        times = []
-        for i in range(0, len(desired_courses)):
-            meetingInfo = []
-            courseTitle = finalAnswerList[j][i][0]
-            sectionID = finalAnswerList[j][i][1]
-            lectureDays = getLectureDays(courseTitle, sectionID)
-            meetingInfo.append(courseTitle)
-            meetingInfo.append(sectionID)
-            meetingInfo.append(lectureDays)
-
-            # returns an array with lectureStartTime and lectureEndTime
-            lectureTimes = getLectureTime(courseTitle, sectionID)
-            meetingInfo.append(range(lectureTimes[0], lectureTimes[1]))
-            
-            hasLab = courseHasLab(courseTitle, sectionID)
-
-            if (hasLab):
-                labDays = getLabDays(courseTitle, sectionID)
-                meetingInfo.append(labDays)
-
-                labTimes = getLabTime(courseTitle, sectionID)
-                meetingInfo.append(range(labTimes[0], labTimes[1]))
-
-            #times.append(courseTitle)
-            #times.append(sectionID)
-            times.append(meetingInfo)
-        finalAnswers.append(times)
-
-    return finalAnswers
-
 # END FUNCTIONS WITH DATABASE ACCESSES
 
 # using the times list, which contains meeting-day information for the classes in a candidate schedule
@@ -217,7 +182,6 @@ def getClassTimes(times):
 
             if(len(labDays) > 2):
                 splitLabDays = labDays.split()
-                print('splitLabDays is ' + str(splitLabDays))
                 for o in range(0, len(splitLabDays)):
                     examine_for_collisions.append([splitLabDays[o], labTime])
 
@@ -343,11 +307,11 @@ def fitness(candidates):
         # then, this information is separated so that each meeting day/time is separated into its own list entry
         # for example, ['MO WE', range(1200, 1250)] will become ['MO', range(1200, 1250)], ['WE', range(1200, 1250)]
         examine_for_collisions = getClassTimes(times)
-        # print('1: examine_for_collisions is ' + str(examine_for_collisions))
+
         # 1. evaluate collisions with each other, meaning for example if the candidate solution is:
         # [[CPSC 120, Section 1], [CPSC 121, Section 1], and [CPSC 131, Section 1]], do these 3 collide with each other?
         internalCollisions = findInternalCollisions(examine_for_collisions)
-        # print('2: examine_for_collisions is ' + str(examine_for_collisions))
+
         # add the number of internal collisions to the total collisions count for this candidate solution
         collisions = collisions + int(internalCollisions)
 
@@ -356,7 +320,7 @@ def fitness(candidates):
         # the user inputted desired dismissal time
         desiredArrival = getEarly()
         desiredDismissal = getEnd()
-        # print('3: examine_for_collisions is ' + str(examine_for_collisions))
+
         arrivalDismissalCollisions = findArrivalDismissalCollisions(examine_for_collisions, desiredArrival, desiredDismissal)
         # add the number of collisions to the total collisions count for this candidate solution
         collisions = collisions + int(arrivalDismissalCollisions)
@@ -387,7 +351,7 @@ def crossover(candidate1, candidate2, candidates):
     slice2candidate1 = []
     slice2candidate2 = []
 
-    # // because we need an integer; result rounds down
+    # because we need an integer; result rounds down
     # so for example, 5 // 2 = int(2.5) = 2
     half = len(candidate1) // 2
 
@@ -401,23 +365,29 @@ def crossover(candidate1, candidate2, candidates):
         slice2candidate1.append(candidate1[b])
         slice2candidate2.append(candidate2[b])
 
-    # cross them over with each other and append them to candidates list, which contains
+    # cross them over with each other
+    child1 = (slice1candidate1 + slice2candidate2)
+    child2 = (slice1candidate2 + slice2candidate1)
+    # in nature, chance of mutation is about 1/2
+    chance1 = random.choice([1, 2])
+    chance2 = random.choice([1, 2])
+    # if chance is true, perform mutation on child1
+    if(chance1 == 1):
+        child1 = mutation(child1)
+    if(chance2 == 1):
+        child2 = mutation(child2)
+
+    # and append them to candidates list, which contains
     # all possible candidate solutions
-    candidates.append((slice1candidate1 + slice2candidate2))
-    candidates.append((slice1candidate2 + slice2candidate1))
+
+    candidates.append(child1)
+    candidates.append(child2)
 
     # return candidates list
     return candidates
 
-# randomly selects one candidate solution from candidates list
-# and then randomly selects one course from that randomly-selected candidate solution
-# and then randomly selects a new section from that randomly-selected course
-# then appends to the candidates list, while also keeping the original candidate solution
-# thus providing 1 additional candidate solution to the candidates list
-def mutation(candidate, candidates):
-    # randomly select one course and randomly choose another section of it
-    # return the mutated child
-    
+def mutation(candidate):
+
     # pick a random course in the candidate schedule
     randomSelection = random.choice(candidate)
     # get that random course's courseTitle
@@ -428,9 +398,9 @@ def mutation(candidate, candidates):
     # replace the old value in candidate with the new value
     candidate = [[courseTitle, sectionID] if x==[courseTitle, randomSelection[1]] else x for x in candidate]
     
-    candidates.append(candidate)
+    return candidate
 
-    return candidates
+# END GENETIC ALGORITHM FUNCTIONS
 
 # BEGIN ENDPOINTS
 @app.route('/')
@@ -444,7 +414,6 @@ def index():
 @app.route('/generate')
 def generate():
     # this is where we execute the local search algorithm; this uses a genetic algorithm
-    # genetic algorithm likely to work best
     # generate a limited list of possible candidates,
     # and then perform evolution on them, thus getting other candidates,
     # and then evaluate them against a fitness function to make sure that all constraints are met
@@ -453,9 +422,9 @@ def generate():
 
     # generate possible candidates
     # get list of all desired courses and for each element in this list, randomly select a section and push it to the candidates dictionary
-    # randomly generate 15 candidate solutions; this number can be increased
+    # randomly generate 300 candidate solutions; this number can be increased, and a more exhaustive set of solutions likely to result
     candidates = []
-    for j in range(0, 15):
+    for j in range(0, 20):
         temp = []
         for i in range(0, len(desired_courses)):
             # get random section selection
@@ -463,25 +432,23 @@ def generate():
             section = randomSectionSelection(desired_courses[i])
             temp.append([desired_courses[i], section])
         candidates.append(temp)
-    # print('1 list of candidates is now: ' + str(candidates))
 
     # take current candidates and perform crossover on them
     # then append these new crossed-over candidates to the candidates list
-    for r in range(0, len(candidates), 2):
-        candidates = crossover(candidates[r], candidates[r+1], candidates)
+    # mutation is done inside crossover() function as well
+    # perform crossover 20 times, thus exploring 20 generations
+    for s in range(0, 7):
+        for r in range(0, len(candidates), 2):
+            candidates = crossover(candidates[r], candidates[r+1], candidates)
 
-    # print('2 list of candidates is now: ' + str(candidates))
-    # take current candidates and perform mutation on them
-    # then append these new mutated candidates to the candidates list
-    for s in range(0, len(candidates)):
-        candidates = mutation(candidates[s], candidates)
-
-    # print('3 list of candidates is now: ' + str(candidates))
-
+    # evaluate fitness
     fitnessCandidates = fitness(candidates)
 
     viableSolutions = []
 
+    # this is "killing" the unfit candidate solutions in the population
+    # allowing only the ones with 0 collisions to survive, and we will perform 
+    # crossover and mutation on them again
     for k in range(0, len(fitnessCandidates)):
         if(fitnessCandidates[k] == 0):
             viableSolutions.append(k)
@@ -489,8 +456,6 @@ def generate():
     finalAnswer = []
     for a in range(0, len(viableSolutions)):
         finalAnswer.append(candidates[viableSolutions[a]])
-
-    print('the final answer is ' + str(finalAnswer))
 
     # remove duplicates from finalAnswer
     if not finalAnswer:
