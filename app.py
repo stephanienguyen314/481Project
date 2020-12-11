@@ -422,7 +422,7 @@ def generate():
 
     # generate possible candidates
     # get list of all desired courses and for each element in this list, randomly select a section and push it to the candidates dictionary
-    # randomly generate 300 candidate solutions; this number can be increased, and a more exhaustive set of solutions likely to result
+    # randomly generate 20 candidate solutions; this number can be increased, and a more exhaustive set of solutions likely to result
     candidates = []
     for j in range(0, 20):
         temp = []
@@ -436,22 +436,56 @@ def generate():
     # take current candidates and perform crossover on them
     # then append these new crossed-over candidates to the candidates list
     # mutation is done inside crossover() function as well
-    # perform crossover 20 times, thus exploring 20 generations
     for s in range(0, 7):
         for r in range(0, len(candidates), 2):
             candidates = crossover(candidates[r], candidates[r+1], candidates)
 
-    # evaluate fitness
+        # evaluate fitness
+        fitnessCandidates = fitness(candidates)
+
+        viableSolutions = []
+
+        # this is "killing" the unfit candidate solutions in the population
+        # allowing only the ones with 2 or fewer collisions to survive, and we will perform 
+        # crossover and mutation on them again
+        for k in range(0, len(fitnessCandidates)):
+            if(fitnessCandidates[k] <= 2):
+                viableSolutions.append(k)
+
+        survivors = []
+        # store surviving candidate solutions
+        for w in range(0, len(viableSolutions)):
+            survivors.append(candidates[viableSolutions[w]])
+
+        # if no viable solutions, where the number of collisions is less than or equal to 2 exist
+        # that means no one in the population has survived to reproduce other candidate solutions
+        # thus, we end the loop and return an empty list
+        # if there is only 1 viable solution that has survived, then we also need to end the loop
+        # because you need at least 2 candidate solutions to have crossovers and reproduce
+        if((len(viableSolutions) == 0) or (len(viableSolutions) == 1)):
+            break
+        # if we find two or more candidate solutions, then keep going with more generations
+        else:
+            candidates = survivors
+
+    # now, make sure that viableSolutions only contains candidates whose fitness value is 0
     fitnessCandidates = fitness(candidates)
 
     viableSolutions = []
 
     # this is "killing" the unfit candidate solutions in the population
-    # allowing only the ones with 0 collisions to survive, and we will perform 
+    # allowing only the ones with 2 or fewer collisions to survive, and we will perform 
     # crossover and mutation on them again
-    for k in range(0, len(fitnessCandidates)):
-        if(fitnessCandidates[k] == 0):
-            viableSolutions.append(k)
+    for q in range(0, len(fitnessCandidates)):
+        if(fitnessCandidates[q] == 0):
+            viableSolutions.append(q)
+
+    if(len(viableSolutions) > 0):
+        print('viable solutions have been found')
+        print('viableSolutions is ' + str(viableSolutions))
+        #print('candidates are ' + str(candidates))
+    else:
+        print('no viable solutions found')
 
     finalAnswer = []
     for a in range(0, len(viableSolutions)):
